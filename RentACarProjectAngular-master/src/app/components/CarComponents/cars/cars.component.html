@@ -1,0 +1,893 @@
+<div class="mb-3">
+  <label for="carFilter" class="form-label">Araba Filtreleme</label>
+  <input
+    type="text"
+    [(ngModel)]="carFilter"
+    class="form-control"
+    id="carFilter"
+    placeholder="Filtre"
+  />
+</div>
+
+<table class="table table-striped" *ngIf="dataLoaded == true">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Marka</th>
+      <th scope="col">Renk</th>
+      <th scope="col">Şube</th>
+      <th scope="col">Vites</th>
+      <th scope="col">Yakıt</th>
+      <th scope="col">Sınıf</th>
+      <th scope="col">Kasa</th>
+      <th scope="col">Plaka</th>
+      <th scope="col">Yıldız</th>
+      <th scope="col">Yıl</th>
+      <th scope="col">Günlük Fiyat</th>
+      <th scope="col">Açıklama</th>
+      <th scope="col">Kullanılabilirlik</th>
+      <th scope="col">Konum</th>
+      <th scope="col">Araba Fotoğrafları</th>
+      <th scope="col">Güncelle</th>
+      <th scope="col">Sil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let carDetailDto of carDetailDtos | carsFilter: carFilter">
+      <td>{{ carDetailDto.brandName }}</td>
+      <td>{{ carDetailDto.colorName }}</td>
+      <td>
+        <a routerLink="/branch/detail/{{ carDetailDto.branchId }}">{{
+          carDetailDto.branchName
+        }}</a>
+      </td>
+      <td>{{ carDetailDto.gearName }}</td>
+      <td>{{ carDetailDto.fuelName }}</td>
+      <td>{{ carDetailDto.className }}</td>
+      <td>{{ carDetailDto.caseName }}</td>
+      <td>
+        <a routerLink="/car/detail/{{ carDetailDto.carId }}">
+          {{ carDetailDto.carPlate }}</a
+        >
+      </td>
+      <td>{{ carDetailDto.carStar }}</td>
+      <td>{{ carDetailDto.modelYear }}</td>
+      <td>{{ carDetailDto.dailyPrice }}</td>
+      <td>{{ carDetailDto.description }}</td>
+      <td>{{ carDetailDto.carUsable }}</td>
+      <td>
+        <a routerLink="/konum/detail/{{ carDetailDto.carLocation }}">{{
+          carDetailDto.carLocation
+        }}</a>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          routerLink="/car/detail/{{ carDetailDto.carId }}"
+        >
+          Görüntüle
+        </button>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#update"
+          data-bs-whatever="@mdo"
+          (click)="createCarDetail(carDetailDto.carId)"
+        >
+          Güncelle
+        </button>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#delete"
+          data-bs-whatever="@mdo"
+          (click)="createCarDetail(carDetailDto.carId)"
+        >
+          Sil
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#add"
+  data-bs-whatever="@mdo"
+>
+  Ekle
+</button>
+
+<!-- Car Ekleme modal -->
+<div
+  class="modal fade"
+  id="add"
+  tabindex="-1"
+  aria-labelledby="addLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addLabel">Araba Ekleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="carAddForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Marka:</label>
+            <div>
+              <select formControlName="brandId" id="brandId" class="form-group">
+                <option
+                  *ngFor="let brand of brands; let i = index"
+                  [ngValue]="brands[i].brandId"
+                >
+                  {{ brands[i].brandName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Renk:</label>
+            <div>
+              <select formControlName="colorId" id="colorId" class="form-group">
+                <option
+                  *ngFor="let color of colors; let i = index"
+                  [ngValue]="colors[i].colorId"
+                >
+                  {{ colors[i].colorName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Şube:</label>
+            <div>
+              <select
+                formControlName="branchId"
+                id="branchId"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let branch of branchs; let i = index"
+                  [ngValue]="branchs[i].branchId"
+                >
+                  {{ branchs[i].branchName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Vites:</label>
+            <div>
+              <select formControlName="gearId" id="gearId" class="form-group">
+                <option
+                  *ngFor="let gear of gears; let i = index"
+                  [ngValue]="gears[i].gearId"
+                >
+                  {{ gears[i].gearName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Yakıt:</label>
+            <div>
+              <select formControlName="fuelId" id="fuelId" class="form-group">
+                <option
+                  *ngFor="let fuel of fuels; let i = index"
+                  [ngValue]="fuels[i].fuelId"
+                >
+                  {{ fuels[i].fuelName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Araç Sınıfı:</label
+            >
+            <div>
+              <select formControlName="classId" id="classId" class="form-group">
+                <option
+                  *ngFor="let class of classes; let i = index"
+                  [ngValue]="classes[i].classId"
+                >
+                  {{ classes[i].className }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kasa Tipi:</label
+            >
+            <div>
+              <select formControlName="caseId" id="caseId" class="form-group">
+                <option
+                  *ngFor="let case of caseTypes; let i = index"
+                  [ngValue]="caseTypes[i].caseId"
+                >
+                  {{ caseTypes[i].caseName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Plaka:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="carPlate"
+                formControlName="carPlate"
+                class="form-control"
+                placeholder="Plaka"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Yıldız Sayısı:</label
+            >
+            <div>
+              <select formControlName="carStar" id="carStar" class="form-group">
+                <option
+                  *ngFor="let carStar of carStars; let i = index"
+                  [ngValue]="carStars[i]"
+                >
+                  {{ carStars[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Model Yılı:</label
+            >
+            <div>
+              <select
+                formControlName="modelYear"
+                id="modelYear"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let modelYear of modelYears; let i = index"
+                  [ngValue]="modelYears[i]"
+                >
+                  {{ modelYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Günlük Fiyat:</label
+            >
+            <div class="form-group">
+              <input
+                type="number"
+                id="dailyPrice"
+                formControlName="dailyPrice"
+                class="form-control"
+                placeholder="Günlük Fiyat"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Açıklama:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="description"
+                formControlName="description"
+                class="form-control"
+                placeholder="Açıklama"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanılabilirlik:</label
+            >
+            <div>
+              <select
+                formControlName="carUsable"
+                id="carUsable"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let carUsable of carUsables; let i = index"
+                  [ngValue]="carUsables[i]"
+                >
+                  {{ carUsables[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Araç Konumu:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="carLocation"
+                formControlName="carLocation"
+                class="form-control"
+                placeholder="Araç Konumu"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="add()">
+              Kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Car Güncelleme Modal -->
+<div
+  class="modal fade"
+  id="update"
+  tabindex="-1"
+  aria-labelledby="updateLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateLabel">Araba Güncelleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="carUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Marka:</label>
+            <div>
+              <select formControlName="brandId" id="brandId" class="form-group">
+                <option
+                  *ngFor="let brand of brands; let i = index"
+                  [ngValue]="brands[i].brandId"
+                >
+                  {{ brands[i].brandName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Renk:</label>
+            <div>
+              <select formControlName="colorId" id="colorId" class="form-group">
+                <option
+                  *ngFor="let color of colors; let i = index"
+                  [ngValue]="colors[i].colorId"
+                >
+                  {{ colors[i].colorName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Şube:</label>
+            <div>
+              <select
+                formControlName="branchId"
+                id="branchId"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let branch of branchs; let i = index"
+                  [ngValue]="branchs[i].branchId"
+                >
+                  {{ branchs[i].branchName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Vites:</label>
+            <div>
+              <select formControlName="gearId" id="gearId" class="form-group">
+                <option
+                  *ngFor="let gear of gears; let i = index"
+                  [ngValue]="gears[i].gearId"
+                >
+                  {{ gears[i].gearName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Yakıt:</label>
+            <div>
+              <select formControlName="fuelId" id="fuelId" class="form-group">
+                <option
+                  *ngFor="let fuel of fuels; let i = index"
+                  [ngValue]="fuels[i].fuelId"
+                >
+                  {{ fuels[i].fuelName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Araç Sınıfı:</label
+            >
+            <div>
+              <select formControlName="classId" id="classId" class="form-group">
+                <option
+                  *ngFor="let class of classes; let i = index"
+                  [ngValue]="classes[i].classId"
+                >
+                  {{ classes[i].className }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kasa Tipi:</label
+            >
+            <div>
+              <select formControlName="caseId" id="caseId" class="form-group">
+                <option
+                  *ngFor="let case of caseTypes; let i = index"
+                  [ngValue]="caseTypes[i].caseId"
+                >
+                  {{ caseTypes[i].caseName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Plaka:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="carPlate"
+                formControlName="carPlate"
+                class="form-control"
+                placeholder="Plaka"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Yıldız Sayısı:</label
+            >
+            <div>
+              <select formControlName="carStar" id="carStar" class="form-group">
+                <option
+                  *ngFor="let carStar of carStars; let i = index"
+                  [ngValue]="carStars[i]"
+                >
+                  {{ carStars[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Model Yılı:</label
+            >
+            <div>
+              <select
+                formControlName="modelYear"
+                id="modelYear"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let modelYear of modelYears; let i = index"
+                  [ngValue]="modelYears[i]"
+                >
+                  {{ modelYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Günlük Fiyat:</label
+            >
+            <div class="form-group">
+              <input
+                type="number"
+                id="dailyPrice"
+                formControlName="dailyPrice"
+                class="form-control"
+                placeholder="Günlük Fiyat"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Açıklama:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="description"
+                formControlName="description"
+                class="form-control"
+                placeholder="Açıklama"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanılabilirlik:</label
+            >
+            <div>
+              <select
+                formControlName="carUsable"
+                id="carUsable"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let carUsable of carUsables; let i = index"
+                  [ngValue]="carUsables[i]"
+                >
+                  {{ carUsables[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Araç Konumu:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="carLocation"
+                formControlName="carLocation"
+                class="form-control"
+                placeholder="Araç Konumu"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="update()">
+              Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Car Silme Modal -->
+<div
+  class="modal fade"
+  id="delete"
+  tabindex="-1"
+  aria-labelledby="deleteLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Araba Silme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="carUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Marka:</label>
+            <div>
+              <select formControlName="brandId" id="brandId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let brand of brands; let i = index"
+                  [ngValue]="brands[i].brandId"
+                >
+                  {{ brands[i].brandName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Renk:</label>
+            <div>
+              <select formControlName="colorId" id="colorId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let color of colors; let i = index"
+                  [ngValue]="colors[i].colorId"
+                >
+                  {{ colors[i].colorName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Şube:</label>
+            <div>
+              <select
+                formControlName="branchId"
+                id="branchId"
+                class="form-group"
+              >
+                <option
+                  disabled
+                  *ngFor="let branch of branchs; let i = index"
+                  [ngValue]="branchs[i].branchId"
+                >
+                  {{ branchs[i].branchName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Vites:</label>
+            <div>
+              <select formControlName="gearId" id="gearId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let gear of gears; let i = index"
+                  [ngValue]="gears[i].gearId"
+                >
+                  {{ gears[i].gearName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Yakıt:</label>
+            <div>
+              <select formControlName="fuelId" id="fuelId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let fuel of fuels; let i = index"
+                  [ngValue]="fuels[i].fuelId"
+                >
+                  {{ fuels[i].fuelName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Araç Sınıfı:</label
+            >
+            <div>
+              <select formControlName="classId" id="classId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let class of classes; let i = index"
+                  [ngValue]="classes[i].classId"
+                >
+                  {{ classes[i].className }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kasa Tipi:</label
+            >
+            <div>
+              <select formControlName="caseId" id="caseId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let case of caseTypes; let i = index"
+                  [ngValue]="caseTypes[i].caseId"
+                >
+                  {{ caseTypes[i].caseName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Plaka:</label>
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="carPlate"
+                formControlName="carPlate"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Yıldız Sayısı:</label
+            >
+            <div>
+              <select formControlName="carStar" id="carStar" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let carStar of carStars; let i = index"
+                  [ngValue]="carStars[i]"
+                >
+                  {{ carStars[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Model Yılı:</label
+            >
+            <div>
+              <select
+                formControlName="modelYear"
+                id="modelYear"
+                class="form-group"
+              >
+                <option
+                  disabled
+                  *ngFor="let modelYear of modelYears; let i = index"
+                  [ngValue]="modelYears[i]"
+                >
+                  {{ modelYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Günlük Fiyat:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="number"
+                id="dailyPrice"
+                formControlName="dailyPrice"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Açıklama:</label>
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="description"
+                formControlName="description"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanılabilirlik:</label
+            >
+            <div>
+              <select
+                formControlName="carUsable"
+                id="carUsable"
+                class="form-group"
+              >
+                <option
+                  disabled
+                  *ngFor="let carUsable of carUsables; let i = index"
+                  [ngValue]="carUsables[i]"
+                >
+                  {{ carUsables[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Araç Konumu:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="carLocation"
+                formControlName="carLocation"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              (click)="delete()"
+            >
+              Sil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

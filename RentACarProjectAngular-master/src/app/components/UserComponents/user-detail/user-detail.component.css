@@ -1,0 +1,53 @@
+.form-group{
+    width: 250px;
+    height: 40px;
+    
+}
+
+.input-group{
+    width: 600px;
+    height: 406px;
+    justify-content: space-between;
+    display: flex;
+    flex-direction: column;
+    /* border:3px solid rgb(138, 136, 136); */
+    
+    
+}
+.card{
+    margin-top: 50px;
+}
+
+.mb-3{
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.phoneNumber{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-right: 25px;
+}
+
+.anaDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* border:3px solid rgb(208, 30, 151); */
+}
+
+.çerçeve{
+    width: 600px;
+    height: 500px;
+    margin-right:15px;
+    margin-bottom:15px;
+    padding-left: 10px;
+    padding-top: 10px;
+    border:3px solid rgb(128, 40, 40);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.table{
+    width: 500px;
+}

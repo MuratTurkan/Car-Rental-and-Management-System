@@ -1,0 +1,560 @@
+<div class="mb-3">
+  <label for="identityInformationFilter" class="form-label"
+    >Kimlik Bilgisi Filtreleme</label
+  >
+  <input
+    type="text"
+    [(ngModel)]="identityInformationFilter"
+    class="form-control"
+    id="identityInformationFilter"
+    placeholder="Filtre"
+  />
+</div>
+
+<table class="table table-striped" *ngIf="dataLoaded == true">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Seri Numarası</th>
+      <th scope="col">Baba Adı</th>
+      <th scope="col">Anne Adı</th>
+      <th scope="col">Doğum Yeri</th>
+      <th scope="col">Doğum Yılı</th>
+      <th scope="col">Medeni Hali</th>
+      <th scope="col">Cinsiyet</th>
+      <th scope="col">Son Geçerlilik Tarihi</th>
+      <th scope="col">Güncelle</th>
+      <th scope="col">Sil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="
+        let identityInformation of identityInformations
+          | identityInformationsFilter: identityInformationFilter
+      "
+    >
+      <td>{{ identityInformation.serialNumber }}</td>
+      <td>{{ identityInformation.fatherName }}</td>
+      <td>{{ identityInformation.motherName }}</td>
+      <td>{{ identityInformation.birthPlace }}</td>
+      <td>{{ identityInformation.birthYear }}</td>
+      <td>{{ identityInformation.maritalStatus }}</td>
+      <td>{{ identityInformation.gender }}</td>
+      <td>{{ identityInformation.validUntil }}</td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#update"
+          data-bs-whatever="@mdo"
+          (click)="createIdentityInformationDetail(identityInformation)"
+        >
+          Güncelle
+        </button>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#delete"
+          data-bs-whatever="@mdo"
+          (click)="createIdentityInformationDetail(identityInformation)"
+        >
+          Sil
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#add"
+  data-bs-whatever="@mdo"
+>
+  Ekle
+</button>
+
+<!-- IdentityInformation Ekleme modal -->
+<div
+  class="modal fade"
+  id="add"
+  tabindex="-1"
+  aria-labelledby="addLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addLabel">Kimlik Bilgisi Ekleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="identityInformationAddForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Seri Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="serialNumber"
+                formControlName="serialNumber"
+                class="form-control"
+                placeholder="Seri Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Baba Adı:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="fatherName"
+                formControlName="fatherName"
+                class="form-control"
+                placeholder="Baba Adı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Anne Adı:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="motherName"
+                formControlName="motherName"
+                class="form-control"
+                placeholder="Anne Adı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yeri:</label
+            >
+            <div class="form-group">
+              <select formControlName="birthPlace" id="birthPlace">
+                <option
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yılı:</label
+            >
+            <div class="form-group">
+              <select formControlName="birthYear" id="birthYear">
+                <option
+                  *ngFor="let birthYear of birthYears; let i = index"
+                  [ngValue]="birthYears[i]"
+                >
+                  {{ birthYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Medeni Hali:</label
+            >
+            <div class="form-group">
+              <select formControlName="maritalStatus" id="maritalStatus">
+                <option
+                  *ngFor="let maritalStatus of maritalStatuses; let i = index"
+                  [ngValue]="maritalStatuses[i].maritalStatus"
+                >
+                  {{ maritalStatuses[i].maritalStatus }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Cinsiyet:</label>
+            <div class="form-group">
+              <select formControlName="gender" id="gender">
+                <option
+                  *ngFor="let gender of genders; let i = index"
+                  [ngValue]="genders[i].gender"
+                >
+                  {{ genders[i].gender }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="validUntil"
+                formControlName="validUntil"
+                class="form-control"
+                placeholder="Son Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="add()">
+              Kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IdentityInformation Güncelleme Modal -->
+<div
+  class="modal fade"
+  id="update"
+  tabindex="-1"
+  aria-labelledby="updateLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateLabel">Kimlik Bilgisi Güncelleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="identityInformationUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Seri Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="serialNumber"
+                formControlName="serialNumber"
+                class="form-control"
+                placeholder="Seri Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Baba Adı:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="fatherName"
+                formControlName="fatherName"
+                class="form-control"
+                placeholder="Baba Adı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Anne Adı:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="motherName"
+                formControlName="motherName"
+                class="form-control"
+                placeholder="Anne Adı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yeri:</label
+            >
+            <div class="form-group">
+              <select formControlName="birthPlace" id="birthPlace">
+                <option
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yılı:</label
+            >
+            <div class="form-group">
+              <select formControlName="birthYear" id="birthYear">
+                <option
+                  *ngFor="let birthYear of birthYears; let i = index"
+                  [ngValue]="birthYears[i]"
+                >
+                  {{ birthYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Medeni Hali:</label
+            >
+            <div class="form-group">
+              <select formControlName="maritalStatus" id="maritalStatus">
+                <option
+                  *ngFor="let maritalStatus of maritalStatuses; let i = index"
+                  [ngValue]="maritalStatuses[i].maritalStatus"
+                >
+                  {{ maritalStatuses[i].maritalStatus }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Cinsiyet:</label>
+            <div class="form-group">
+              <select formControlName="gender" id="gender">
+                <option
+                  *ngFor="let gender of genders; let i = index"
+                  [ngValue]="genders[i].gender"
+                >
+                  {{ genders[i].gender }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="validUntil"
+                formControlName="validUntil"
+                class="form-control"
+                placeholder="Son Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="update()">
+              Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- IdentityInformation Silme Modal -->
+<div
+  class="modal fade"
+  id="delete"
+  tabindex="-1"
+  aria-labelledby="deleteLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Kimlik Bilgisi Silme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="identityInformationUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Seri Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="serialNumber"
+                formControlName="serialNumber"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Baba Adı:</label>
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="fatherName"
+                formControlName="fatherName"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Anne Adı:</label>
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="motherName"
+                formControlName="motherName"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yeri:</label
+            >
+            <div class="form-group">
+              <select formControlName="birthPlace" id="birthPlace">
+                <option
+                  disabled
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yılı:</label
+            >
+            <div class="form-group">
+              <select formControlName="birthYear" id="birthYear">
+                <option
+                  disabled
+                  *ngFor="let birthYear of birthYears; let i = index"
+                  [ngValue]="birthYears[i]"
+                >
+                  {{ birthYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Medeni Hali:</label
+            >
+            <div class="form-group">
+              <select formControlName="maritalStatus" id="maritalStatus">
+                <option
+                  disabled
+                  *ngFor="let maritalStatus of maritalStatuses; let i = index"
+                  [ngValue]="maritalStatuses[i].maritalStatus"
+                >
+                  {{ maritalStatuses[i].maritalStatus }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Cinsiyet:</label>
+            <div class="form-group">
+              <select formControlName="gender" id="gender">
+                <option
+                  disabled
+                  *ngFor="let gender of genders; let i = index"
+                  [ngValue]="genders[i].gender"
+                >
+                  {{ genders[i].gender }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="date"
+                id="validUntil"
+                formControlName="validUntil"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              (click)="delete()"
+            >
+              Sil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

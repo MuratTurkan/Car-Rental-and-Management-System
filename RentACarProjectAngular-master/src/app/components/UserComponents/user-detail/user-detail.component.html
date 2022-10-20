@@ -1,0 +1,358 @@
+<!-- Bilgiler -->
+<div *ngIf="user">
+  <div class="card border-info mb-3" style="max-width: 18rem" *ngIf="user">
+    <div class="card-header"><b>Kullanıcı Bilgisi</b></div>
+    <div class="card-body">
+      <td>
+        <tr>
+          <b>Adı:</b>
+        </tr>
+        <tr>
+          <b>Soyadı:</b>
+        </tr>
+        <tr>
+          <b>TC:</b>
+        </tr>
+        <tr>
+          <b>Mail Adresi:</b>
+        </tr>
+        <tr>
+          <b>Durum:</b>
+        </tr>
+        <tr>
+          <b>Doğum Yılı:</b>
+        </tr>
+      </td>
+      <td></td>
+      <td class="padding">
+        <tr>
+          {{
+            user.firstName
+          }}
+        </tr>
+        <tr>
+          {{
+            user.lastName
+          }}
+        </tr>
+        <tr>
+          {{
+            user.nationalityId
+          }}
+        </tr>
+        <tr>
+          {{
+            user.email
+          }}
+        </tr>
+        <tr>
+          {{
+            user.status
+          }}
+        </tr>
+        <tr>
+          {{
+            user.birthYear
+          }}
+        </tr>
+      </td>
+    </div>
+  </div>
+</div>
+
+<div class="anaDiv">
+  <!-- Identity Information -->
+  <div *ngIf="dataLoaded">
+    <form [formGroup]="identityInformationForm">
+      <div class="çerçeve">
+        <h4>Kimlik Bilgileri</h4>
+        <div class="input-group">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Seri Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="serialNumber"
+                formControlName="serialNumber"
+                class="form-control"
+                placeholder="Seri Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Baba Adı:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="fatherName"
+                formControlName="fatherName"
+                class="form-control"
+                placeholder="Baba Adı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Anne Adı:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="motherName"
+                formControlName="motherName"
+                class="form-control"
+                placeholder="Anne Adı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yeri:</label
+            >
+            <div>
+              <select
+                formControlName="birthPlace"
+                id="birthPlace"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yılı:</label
+            >
+            <div class="form-group">
+              <input
+                [readOnly]="true"
+                type="text"
+                id="birthYear"
+                formControlName="birthYear"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Medeni Hali:</label
+            >
+            <div>
+              <select
+                formControlName="maritalStatus"
+                id="maritalStatus"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let maritalStatus of maritalStatuses; let i = index"
+                  [ngValue]="maritalStatuses[i].maritalStatus"
+                >
+                  {{ maritalStatuses[i].maritalStatus }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Cinsiyet:</label>
+            <div>
+              <select formControlName="gender" id="gender" class="form-group">
+                <option
+                  *ngFor="let gender of genders; let i = index"
+                  [ngValue]="genders[i].gender"
+                >
+                  {{ genders[i].gender }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="validUntil"
+                formControlName="validUntil"
+                class="form-control"
+                placeholder="Son Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="deleteIdentityInformation()"
+          >
+            Bilgileri Sil
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="updateIdentityInformation()"
+          >
+            Güncelle
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Driving Information -->
+  <div *ngIf="dataLoaded">
+    <form [formGroup]="drivingInformationForm">
+      <div class="çerçeve">
+        <h4>Ehliyet Bilgileri</h4>
+        <div class="input-group">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Sürücü Sicil Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="licenceNumber"
+                formControlName="licenceNumber"
+                class="form-control"
+                placeholder="Sürücü Sicil Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="expiryDate"
+                formControlName="expiryDate"
+                class="form-control"
+                placeholder="Son Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Verildiği Yer:</label
+            >
+            <div>
+              <select
+                formControlName="licenceProvince"
+                id="licenceProvince"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kan Grubu:</label
+            >
+            <div>
+              <select
+                formControlName="bloodGroup"
+                id="bloodGroup"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let bloodGroup of bloodGroups; let i = index"
+                  [ngValue]="bloodGroups[i].bloodGroup"
+                >
+                  {{ bloodGroups[i].bloodGroup }}
+                </option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="deleteDrivingInformation()"
+          >
+            Bilgileri Sil
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            (click)="updateDrivingInformation()"
+          >
+            Güncelle
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Phone Numbers -->
+  <div *ngIf="dataLoaded">
+    <form [formGroup]="phoneNumberForm">
+      <div class="çerçeve">
+        <h4>Telefon Bilgileri</h4>
+        <div class="input-group">
+          <div class="mb-3">
+            <table class="table">
+              <tbody>
+                <tr *ngFor="let phoneNumber of phoneNumbers">
+                  <td>{{ phoneNumber?.phoneNo }}</td>
+
+                  <td>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="deletePhoneNumber(phoneNumber)"
+                    >
+                      Sil
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="modal-footer phoneNumber" *ngIf="phoneNumbers.length < 5">
+            <div class="form-group">
+              <input
+                type="text"
+                id="phoneNo"
+                formControlName="phoneNo"
+                class="form-control"
+                placeholder="Telefon Numarası"
+              />
+            </div>
+            <button
+              type="button"
+              class="btn btn-primary"
+              (click)="addPhoneNumber()"
+            >
+              Ekle
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

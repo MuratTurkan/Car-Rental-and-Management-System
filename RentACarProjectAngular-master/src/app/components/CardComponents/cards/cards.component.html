@@ -1,0 +1,430 @@
+<div class="mb-3">
+  <label for="cardFilter" class="form-label">Kart Filtreleme</label>
+  <input
+    type="text"
+    [(ngModel)]="cardFilter"
+    class="form-control"
+    id="cardFilter"
+    placeholder="Filtre"
+  />
+</div>
+
+<table class="table table-striped" *ngIf="dataLoaded == true">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Kullanıcı TC</th>
+      <th scope="col">Kart Sahibi</th>
+      <th scope="col">Kart Numarası</th>
+      <th scope="col">Son Kullanma Tarihi</th>
+      <th scope="col">CVV Numarası</th>
+      <th scope="col">Güncelle</th>
+      <th scope="col">Sil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let cardDetailDto of cardDetailDtos | cardsFilter: cardFilter">
+      <td>
+        <a routerLink="/user/detail/{{ cardDetailDto.userId }}">
+          {{ cardDetailDto.nationalityId }}</a
+        >
+      </td>
+      <td>
+        {{ cardDetailDto.fullName }}
+      </td>
+      <td>
+        {{ cardDetailDto.cardNo }}
+      </td>
+      <td>
+        {{ cardDetailDto.expiryDate }}
+      </td>
+      <td>
+        {{ cardDetailDto.cvv }}
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#update"
+          data-bs-whatever="@mdo"
+          (click)="createCardDetail(cardDetailDto.cardId)"
+        >
+          Güncelle
+        </button>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#delete"
+          data-bs-whatever="@mdo"
+          (click)="createCardDetail(cardDetailDto.cardId)"
+        >
+          Sil
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#add"
+  data-bs-whatever="@mdo"
+>
+  Ekle
+</button>
+
+<!-- Card Ekleme modal -->
+<div
+  class="modal fade"
+  id="add"
+  tabindex="-1"
+  aria-labelledby="addLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addLabel">Kart Ekleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="cardAddForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanıcı Tc:</label
+            >
+            <div class="form-group">
+              <select formControlName="userId" id="userId">
+                <option
+                  *ngFor="let user of users; let i = index"
+                  [ngValue]="users[i].userId"
+                >
+                  {{ users[i].nationalityId }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Sahibi Adı Soyadı:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="fullName"
+                formControlName="fullName"
+                class="form-control"
+                placeholder="Kart Sahibi Adı Soyadı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="number"
+                id="cardNo"
+                formControlName="cardNo"
+                class="form-control"
+                placeholder="Kart Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="expiryDate"
+                formControlName="expiryDate"
+                class="form-control"
+                placeholder="Kart Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Cvv Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="number"
+                id="cvv"
+                formControlName="cvv"
+                class="form-control"
+                placeholder="Cvv Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="add()">
+              Kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Card Güncelleme Modal -->
+<div
+  class="modal fade"
+  id="update"
+  tabindex="-1"
+  aria-labelledby="updateLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateLabel">Kart Güncelleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="cardUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanıcı Tc:</label
+            >
+            <div class="form-group">
+              <select formControlName="userId" id="userId">
+                <option
+                  *ngFor="let user of users; let i = index"
+                  [ngValue]="users[i].userId"
+                >
+                  {{ users[i].nationalityId }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Sahibi Adı Soyadı:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="fullName"
+                formControlName="fullName"
+                class="form-control"
+                placeholder="Kart Sahibi Adı Soyadı"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="number"
+                id="cardNo"
+                formControlName="cardNo"
+                class="form-control"
+                placeholder="Kart Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="expiryDate"
+                formControlName="expiryDate"
+                class="form-control"
+                placeholder="Kart Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Cvv Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="number"
+                id="cvv"
+                formControlName="cvv"
+                class="form-control"
+                placeholder="Cvv Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="update()">
+              Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Card Silme Modal -->
+<div
+  class="modal fade"
+  id="delete"
+  tabindex="-1"
+  aria-labelledby="deleteLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Kart Silme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="cardUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanıcı Tc:</label
+            >
+            <div class="form-group">
+              <select formControlName="userId" id="userId">
+                <option
+                  disabled
+                  *ngFor="let user of users; let i = index"
+                  [ngValue]="users[i].userId"
+                >
+                  {{ users[i].nationalityId }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Sahibi Adı Soyadı:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="fullName"
+                formControlName="fullName"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="number"
+                id="cardNo"
+                formControlName="cardNo"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kart Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="date"
+                id="expiryDate"
+                formControlName="expiryDate"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Cvv Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="number"
+                id="cvv"
+                formControlName="cvv"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              (click)="delete()"
+            >
+              Sil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

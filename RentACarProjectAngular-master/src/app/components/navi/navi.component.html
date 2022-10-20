@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="">Ana Sayfa</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="/branchs" *ngIf="getRole()=='Yönetici'">Şubeler</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="/cars" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Arabalar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="brands" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Markalar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="caseTypes" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Kasa Tipleri</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="classes" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Araç Sınıfları</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="colors" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Renkler</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="fuels" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Yakıtlar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="gears" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Vitesler</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="phoneNumbers" *ngIf="getRole()=='Yönetici'||getRole()=='Çalışan'">Telefon Numaraları</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="rentalDetails" *ngIf="getRole()">Kiralama Detayları</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="users" *ngIf="getRole()=='Yönetici'">Kullanıcılar</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" routerLink="users" *ngIf="getRole()=='Çalışan'">Müşteriler</a>
+        </li>
+      </ul>
+      <b *ngIf="getRole()">Hoşgeldiniz - {{getCurrentUserName()}}</b>
+      <button class="btn-primary" routerLink="login" *ngIf="!getRole()">Giriş Yap</button>
+      <button class="btn-primary" routerLink="register" *ngIf="!getRole()">Kayıt Ol</button>
+      <button class="btn-primary" routerLink="my_account" *ngIf="getRole()">Hesabım</button>
+      <button class="btn-primary" *ngIf="getRole()" (click)="logout()">Çıkış Yap</button>
+    </div>
+  </div>
+</nav>

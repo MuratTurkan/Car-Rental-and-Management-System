@@ -1,0 +1,287 @@
+<div class="mb-3">
+  <label for="phoneNumberFilter" class="form-label"
+    >Telefon Numarası Filtreleme</label
+  >
+  <input
+    type="text"
+    [(ngModel)]="phoneNumberFilter"
+    class="form-control"
+    id="phoneNumberFilter"
+    placeholder="Filtre"
+  />
+</div>
+
+<table class="table table-striped" *ngIf="dataLoaded == true">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Kullanıcı TC</th>
+      <th scope="col">Telefon No</th>
+      <th scope="col">Güncelle</th>
+      <th scope="col">Sil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="
+        let phoneNumberDetailDto of phoneNumberDetailDtos
+          | phoneNumbersFilter: phoneNumberFilter
+      "
+    >
+      <td>
+        <a routerLink="/user/detail/{{ phoneNumberDetailDto.userId }}">{{
+          phoneNumberDetailDto.nationalityId
+        }}</a>
+      </td>
+      <td>{{ phoneNumberDetailDto.phoneNo }}</td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#update"
+          data-bs-whatever="@mdo"
+          (click)="createPhoneNumberDetail(phoneNumberDetailDto.phoneId)"
+        >
+          Güncelle
+        </button>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#delete"
+          data-bs-whatever="@mdo"
+          (click)="createPhoneNumberDetail(phoneNumberDetailDto.phoneId)"
+        >
+          Sil
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#add"
+  data-bs-whatever="@mdo"
+>
+  Ekle
+</button>
+
+<!-- PhoneNumber Ekleme modal -->
+<div
+  class="modal fade"
+  id="add"
+  tabindex="-1"
+  aria-labelledby="addLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addLabel">Telefon Numarası Ekleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="phoneNumberAddForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanıcı TC:</label
+            >
+            <div>
+              <select formControlName="userId" id="userId" class="form-group">
+                <option
+                  *ngFor="let user of users; let i = index"
+                  [ngValue]="users[i].userId"
+                >
+                  {{ users[i].nationalityId }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Telefon Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="phoneNo"
+                formControlName="phoneNo"
+                class="form-control"
+                placeholder="Telefon Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="add()">
+              Kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PhoneNumber Güncelleme Modal -->
+<div
+  class="modal fade"
+  id="update"
+  tabindex="-1"
+  aria-labelledby="updateLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateLabel">
+          Telefon Numarası Güncelleme
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="phoneNumberUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanıcı TC:</label
+            >
+            <div>
+              <select formControlName="userId" id="userId" class="form-group">
+                <option
+                  *ngFor="let user of users; let i = index"
+                  [ngValue]="users[i].userId"
+                >
+                  {{ users[i].nationalityId }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Telefon Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="phoneNo"
+                formControlName="phoneNo"
+                class="form-control"
+                placeholder="Telefon Numarası"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="update()">
+              Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PhoneNumber Silme Modal -->
+<div
+  class="modal fade"
+  id="delete"
+  tabindex="-1"
+  aria-labelledby="deleteLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Telefon Numarası Silme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="phoneNumberUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kullanıcı TC:</label
+            >
+            <div>
+              <select formControlName="userId" id="userId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let user of users; let i = index"
+                  [ngValue]="users[i].userId"
+                >
+                  {{ users[i].nationalityId }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Telefon Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="phoneNo"
+                formControlName="phoneNo"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              (click)="delete()"
+            >
+              Sil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

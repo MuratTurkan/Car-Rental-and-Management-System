@@ -1,0 +1,23 @@
+img {
+  height: 160px;
+  width: 335px;
+}
+.col {
+  height: 200px;
+  width: 375px;
+}
+.modalImage {
+  height: 600px;
+  width: 800px;
+}
+.h-100{
+    padding-top: 20px;
+    padding-left: 7px;
+}
+.close{
+  width: 30px;
+  height: 30px;
+  position: absolute;
+}
+
+

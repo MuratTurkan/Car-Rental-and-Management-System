@@ -1,0 +1,183 @@
+<div
+  class="card border-info mb-3 x"
+  style="max-width: 18rem"
+  *ngIf="carDetailDto"
+>
+  <div class="card-header"><b>Araba Bilgisi</b></div>
+  <div class="card-body">
+    <tr>
+      <td><b>Marka:</b></td>
+      <td>
+        {{ carDetailDto.brandName }}
+      </td>
+    </tr>
+    <tr>
+      <td><b>Renk:</b></td>
+      <td>
+        {{ carDetailDto.colorName }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Şube:</b>
+      </td>
+      <td>
+        {{ carDetailDto.branchName }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Vites:</b>
+      </td>
+      <td>
+        {{ carDetailDto.gearName }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Yakıt:</b>
+      </td>
+      <td>
+        {{ carDetailDto.fuelName }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Sınıf:</b>
+      </td>
+      <td>
+        {{ carDetailDto.className }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Kasa:</b>
+      </td>
+      <td>
+        {{ carDetailDto.caseName }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Plaka:</b>
+      </td>
+      <td>
+        {{ carDetailDto.carPlate }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Yıldız:</b>
+      </td>
+      <td>
+        {{ carDetailDto.carStar }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Yıl:</b>
+      </td>
+      <td>
+        {{ carDetailDto.modelYear }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Günlük Fiyat:</b>
+      </td>
+      <td>
+        {{ carDetailDto.dailyPrice }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Açıklama:</b>
+      </td>
+      <td>
+        {{ carDetailDto.description }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Kullanılabilirlik:</b>
+      </td>
+      <td>
+        {{ carDetailDto.carUsable }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <b>Konum:</b>
+      </td>
+      <td>
+        {{ carDetailDto.carLocation }}
+      </td>
+    </tr>
+  </div>
+</div>
+
+<div class="anaDiv" *ngIf="carDetailDto">
+  <div class="input-group">
+    <div class="col" *ngFor="let carImage of carImages">
+      <div class="card">
+        <button class="close" *ngIf="carImage" (click)="imageDelete(carImage)">
+          X
+        </button>
+        <img
+          *ngIf="carImage"
+          src="{{ carImage.imagePath }}"
+          class="card-img-top"
+          alt="..."
+        />
+
+        <div class="modal-body" *ngIf="!carImage">
+          <form [formGroup]="imageForm">
+            <label for="recipient-name" class="col-form-label"
+              >Resim Linki:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="imagePath"
+                formControlName="imagePath"
+                class="form-control"
+                placeholder="Resim Linki"
+              />
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-primary"
+                (click)="imageAdd()"
+              >
+                Kaydet
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- <div class="modal-body">
+  <form [formGroup]="imageForm">
+      <label for="recipient-name" class="col-form-label">Resim Linki:</label>
+      <div class="form-group">
+        <input
+          type="text"
+          id="imagePath"
+          formControlName="imagePath"
+          class="form-control"
+          placeholder="Resim Linki"
+        />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" (click)="add()">
+        Kaydet
+      </button>
+    </div>
+  </form>
+</div> -->

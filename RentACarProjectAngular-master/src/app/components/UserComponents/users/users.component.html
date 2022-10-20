@@ -1,0 +1,375 @@
+<div class="mb-3">
+  <label for="userFilter" class="form-label">Kullanıcı Filtreleme</label>
+  <input
+    type="text"
+    [(ngModel)]="userFilter"
+    class="form-control"
+    id="userFilter"
+    placeholder="Filtre"
+  />
+</div>
+
+<table class="table table-striped" *ngIf="dataLoaded == true">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Adı</th>
+      <th scope="col">Soyadı</th>
+      <th scope="col">TC No</th>
+      <th scope="col">Doğum Yılı</th>
+      <th scope="col">Mail Adresi</th>
+      <th scope="col">Durum</th>
+      <th scope="col">Yetki</th>
+      <th scope="col">Diğer Detaylar</th>
+      <th scope="col">Güncelle</th>
+      <th scope="col">Sil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let userDetailDto of userDetailDtos | usersFilter: userFilter">
+      <td>{{ userDetailDto.firstName }}</td>
+      <td>{{ userDetailDto.lastName }}</td>
+      <td><a routerLink="/user/detail/{{ userDetailDto.userId }}">{{ userDetailDto.nationalityId }}</a></td>
+      <td>{{ userDetailDto.birthYear }}</td>
+      <td>{{ userDetailDto.email }}</td>
+      <td>{{ userDetailDto.status }}</td>
+      <td>{{ userDetailDto.claimName }}</td>
+
+      <td>
+        <button
+          *ngIf="userDetailDto.claimName == 'Müşteri'"
+          class="btn btn-primary"
+          routerLink="/user/detail/{{ userDetailDto.userId }}"
+        >
+          Diğer Detaylar
+        </button>
+        <button
+          *ngIf="userDetailDto.claimName !== 'Müşteri'"
+          class="btn btn-primary"
+          disabled
+        >
+          Diğer Detaylar
+        </button>
+      </td>
+      <td>
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#update"
+          data-bs-whatever="@mdo"
+          (click)="createUserDetail(userDetailDto.userId)"
+        >
+          Güncelle
+        </button>
+      </td>
+      <td>
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#delete"
+          data-bs-whatever="@mdo"
+          (click)="createUserDetail(userDetailDto.userId)"
+        >
+          Sil
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button
+  *ngIf="getRole() == 'Yönetici'"
+  class="btn btn-primary"
+  routerLink="/register"
+>
+  Kullanıcı Kayıt Et
+</button>
+
+<button
+  *ngIf="getRole() == 'Çalışan'"
+  class="btn btn-primary"
+  routerLink="/register"
+>
+  Müşteri Kayıt Et
+</button>
+
+<!-- User Güncelleme Modal -->
+<div
+  class="modal fade"
+  id="update"
+  tabindex="-1"
+  aria-labelledby="updateLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateLabel">Kullanıcı Güncelleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="userUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Ad:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="firstName"
+                formControlName="firstName"
+                class="form-control"
+                placeholder="Ad"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Soyad:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="lastName"
+                formControlName="lastName"
+                class="form-control"
+                placeholder="Soyad"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">TC No:</label>
+            <div class="form-group">
+              <input
+                type="text"
+                id="nationalityId"
+                formControlName="nationalityId"
+                class="form-control"
+                placeholder="TC No"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yılı:</label
+            >
+            <div>
+              <select
+                formControlName="birthYear"
+                id="birthYear"
+                class="form-group"
+              >
+                <option
+                  *ngFor="let birthYear of birthYears; let i = index"
+                  [ngValue]="birthYears[i]"
+                >
+                  {{ birthYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Mail Adresi:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="email"
+                formControlName="email"
+                class="form-control"
+                placeholder="Mail Adresi"
+              />
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Durum:</label>
+            <div>
+              <select formControlName="status" id="status" class="form-group">
+                <option
+                  *ngFor="let status of statuses; let i = index"
+                  [ngValue]="statuses[i]"
+                >
+                  {{ statuses[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3" *ngIf="getRole() == 'Yönetici'">
+            <label for="recipient-name" class="col-form-label">Yetki:</label>
+            <div>
+              <select formControlName="claimId" id="claimId" class="form-group">
+                <option
+                  *ngFor="let claim of claims; let i = index"
+                  [ngValue]="claims[i].claimId"
+                >
+                  {{ claims[i].claimName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="update()">
+              Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Silme Modal -->
+<div
+  class="modal fade"
+  id="delete"
+  tabindex="-1"
+  aria-labelledby="deleteLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Kullanıcı Silme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="userUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Ad:</label>
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="firstName"
+                formControlName="firstName"
+                class="form-control"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Soyad:</label>
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="lastName"
+                formControlName="lastName"
+                class="form-control"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">TC No:</label>
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="nationalityId"
+                formControlName="nationalityId"
+                class="form-control"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Doğum Yılı:</label
+            >
+            <div>
+              <select
+                formControlName="birthYear"
+                id="birthYear"
+                class="form-group"
+              >
+                <option
+                  disabled
+                  *ngFor="let birthYear of birthYears; let i = index"
+                  [ngValue]="birthYears[i]"
+                >
+                  {{ birthYears[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Mail Adresi:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="email"
+                formControlName="email"
+                class="form-control"
+              />
+            </div>
+          </div>
+         
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Durum:</label>
+            <div>
+              <select formControlName="status" id="status" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let status of statuses; let i = index"
+                  [ngValue]="statuses[i]"
+                >
+                  {{ statuses[i] }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3" *ngIf="getRole() == 'Yönetici'">
+            <label for="recipient-name" class="col-form-label">Yetki:</label>
+            <div>
+              <select formControlName="claimId" id="claimId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let claim of claims; let i = index"
+                  [ngValue]="claims[i].claimId"
+                >
+                  {{ claims[i].claimName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              (click)="delete()"
+            >
+              Sil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,400 @@
+<div *ngIf="getByUsable">
+  <form [formGroup]="getByUsable">
+    <div class="çerçeve">
+      <h4>Araç Sorgulama</h4>
+      <div class="input-group">
+        <div class="mb-3">
+          <label for="recipient-name" class="col-form-label"
+            >Alış Şubesi:</label
+          >
+          <div>
+            <select formControlName="branchId" id="branchId" class="form-group">
+              <option
+                *ngFor="let branch of branchs; let i = index"
+                [ngValue]="branchs[i].branchId"
+              >
+                {{ branchs[i].branchName }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="recipient-name" class="col-form-label"
+            >Alış Tarihi:</label
+          >
+          <div class="form-group">
+            <input
+              formControlName="rentDate"
+              type="date"
+              class="form-control"
+              id="rentDate"
+              min="{{ minRentDate }}"
+              max="{{ maxRentDate }}"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="recipient-name" class="col-form-label"
+            >Bırakış Tarihi:</label
+          >
+          <div class="form-group">
+            <input
+              *ngIf="createMinReturnDate()"
+              formControlName="returnDate"
+              type="date"
+              class="form-control"
+              id="returnDate"
+              min="{{ minReturnDate }}"
+              max="{{ maxReturnDate }}"
+            />
+            <input
+              *ngIf="!createMinReturnDate()"
+              class="form-control"
+              disabled
+              type="date"
+            />
+          </div>
+        </div>
+
+        <div
+          class="mb-3"
+          *ngIf="getRole() == 'Yönetici' || getRole() == 'Çalışan'"
+        >
+          <label for="recipient-name" class="col-form-label"
+            >Kiralanacak Kullanıcı TC:</label
+          >
+          <div>
+            <select formControlName="userId" id="userId" class="form-group">
+              <option
+                *ngFor="let customer of customers; let i = index"
+                [ngValue]="customers[i].userId"
+              >
+                {{ customers[i].nationalityId }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="recipient-name" class="col-form-label">Araç Bul:</label>
+          <button
+            type="button"
+            class="btn btn-primary form-group"
+            (click)="deneme()"
+          >
+            Araç Bul
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>
+
+<div *ngIf="dataLoaded" class="çerçeve">
+  <div class="input-group">
+    <div class="çerçeve" style="max-height: 600px">
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label"
+          >Marka Filtreleme:</label
+        >
+        <div>
+          <select id="brandFilter" [(ngModel)]="brandFilter" class="form-group">
+            <option
+              *ngFor="let brand of brands; let i = index"
+              [ngValue]="brands[i].value"
+            >
+              {{ brands[i].name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label"
+          >Renk Filtreleme:</label
+        >
+        <div>
+          <select id="colorFilter" [(ngModel)]="colorFilter" class="form-group">
+            <option
+              *ngFor="let color of colors; let i = index"
+              [ngValue]="colors[i].value"
+            >
+              {{ colors[i].name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label"
+          >Vites Filtreleme:</label
+        >
+        <div>
+          <select id="gearFilter" [(ngModel)]="gearFilter" class="form-group">
+            <option
+              *ngFor="let gear of gears; let i = index"
+              [ngValue]="gears[i].value"
+            >
+              {{ gears[i].name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label"
+          >Yakıt Filtreleme:</label
+        >
+        <div>
+          <select id="fuelFilter" [(ngModel)]="fuelFilter" class="form-group">
+            <option
+              *ngFor="let fuel of fuels; let i = index"
+              [ngValue]="fuels[i].value"
+            >
+              {{ fuels[i].name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label"
+          >Sınıf Filtreleme:</label
+        >
+        <div>
+          <select id="classFilter" [(ngModel)]="classFilter" class="form-group">
+            <option
+              *ngFor="let class of classes; let i = index"
+              [ngValue]="classes[i].value"
+            >
+              {{ classes[i].name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="recipient-name" class="col-form-label"
+          >Kasa Tipi Filtreleme:</label
+        >
+        <div>
+          <select
+            id="caseTypeFilter"
+            [(ngModel)]="caseTypeFilter"
+            class="form-group"
+          >
+            <option
+              *ngFor="let caseType of caseTypes; let i = index"
+              [ngValue]="caseTypes[i].value"
+            >
+              {{ caseTypes[i].name }}
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div class="araçlar">
+      <div
+        class="card mb-3"
+        *ngFor="
+          let carDetailDto of carDetailDtos
+            | rentalBrandFilter: brandFilter
+            | rentalColorFilter: colorFilter
+            | rentalGearFilter: gearFilter
+            | rentalFuelFilter: fuelFilter
+            | rentalClassFilter: classFilter
+            | rentalCaseTypeFilter: caseTypeFilter
+        "
+      >
+        <div>
+          <b>{{ carDetailDto.brandName }}</b>
+        </div>
+        <div class="row g-0">
+          <div
+            [attr.id]="'a' + carDetailDto.carId"
+            class="carousel slide carousel-fade"
+            data-bs-ride="carousel"
+          >
+            <div class="carousel-inner">
+              <div
+                class="carousel-item"
+                *ngFor="let carImage of carDetailDto.carImages; let i = index"
+                [ngClass]="{ active: i == 0 }"
+              >
+                <img
+                  src="{{ carImage.imagePath }}"
+                  class="d-block w-100"
+                  alt="..."
+                />
+              </div>
+            </div>
+            <button
+              class="carousel-control-prev"
+              type="button"
+              [attr.data-bs-target]="'#a' + carDetailDto.carId"
+              data-bs-slide="prev"
+            >
+              <span
+                class="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              [attr.data-bs-target]="'#a' + carDetailDto.carId"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+          <div class="col-md-6">
+            <div class="card-body">
+              <h5 class="card-title">
+                {{ carDetailDto.description }} ,{{ carDetailDto.modelYear }}
+              </h5>
+              <tr>
+                <td><b>Renk:</b> {{ carDetailDto.colorName }}</td>
+                <td><b>Vites:</b> {{ carDetailDto.gearName }}</td>
+                <td><b>Yakıt:</b> {{ carDetailDto.fuelName }}</td>
+              </tr>
+              <tr>
+                <td><b>Sınıf:</b> {{ carDetailDto.className }}</td>
+                <td><b>Kasa:</b> {{ carDetailDto.caseName }}</td>
+                <td><b>Yıldız:</b> {{ carDetailDto.carStar }}</td>
+              </tr>
+
+              <p *ngIf="fiyatHesapla(carDetailDto.dailyPrice) > 0">
+                Fiyat: {{ fiyatHesapla(carDetailDto.dailyPrice) }}
+                <button
+                  class="btn-danger"
+                  data-bs-toggle="modal"
+                  (click)="createPaymentForm(carDetailDto)"
+                  data-bs-target="#payment"
+                  data-bs-whatever="@mdo"
+                >
+                  Kirala ({{ gunHesapla() }} Gün)
+                </button>
+                <!-- (click)="rentControl(carDetailDto.carId)" ====== Kirala butonun içindeki kod -->
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="modal fade"
+        id="payment"
+        tabindex="-1"
+        aria-labelledby="paymentLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" >
+          <div class="modal-content" *ngIf="paymentForm">
+            <div class="modal-header">
+              <h5 class="modal-title" id="paymentLabel">Ödeme Bilgileri</h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <form [formGroup]="paymentForm">
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label"
+                    >Fiyat:</label
+                  >
+                  <div class="form-group">
+                    <input
+                      [readonly]="true"
+                      type="text"
+                      class="form-control"
+                      id="price"
+                      formControlName="price"
+                    />
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label"
+                    >Kart Sahibi Ad Soyad:</label
+                  >
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Kart Sahibi Ad Soyad"
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label"
+                    >Kart Numarası:</label
+                  >
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Kart Numarası"
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label"
+                    >Son Geçerlilik Tarihi:</label
+                  >
+                  <div class="form-group">
+                    <input
+                      type="date"
+                      class="form-control"
+                      placeholder="Son Geçerlilik Tarihi"
+                    />
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label for="recipient-name" class="col-form-label"
+                    >Cvv No:</label
+                  >
+                  <div class="form-group">
+                    <input
+                      type="text"
+                      class="form-control"
+                      placeholder="Cvv No"
+                    />
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Kapat
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    (click)="rentControl()"
+                  >
+                    Öde
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

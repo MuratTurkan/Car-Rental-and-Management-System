@@ -1,0 +1,382 @@
+<div class="mb-3">
+  <label for="drivingInformationFilter" class="form-label"
+    >Sürücü Bilgisi Filtreleme</label
+  >
+  <input
+    type="text"
+    [(ngModel)]="drivingInformationFilter"
+    class="form-control"
+    id="drivingInformationFilter"
+    placeholder="Filtre"
+  />
+</div>
+
+<table class="table table-striped" *ngIf="dataLoaded == true">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col">Sürücü Sicil Numarası</th>
+      <th scope="col">Son Geçerlilik Tarihi</th>
+      <th scope="col">Verildiği Yer</th>
+      <th scope="col">Kan Grubu</th>
+      <th scope="col">Güncelle</th>
+      <th scope="col">Sil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="
+        let drivingInformation of drivingInformations
+          | drivingInformationsFilter: drivingInformationFilter
+      "
+    >
+      <td>
+        {{ drivingInformation.licenceNumber }}
+      </td>
+      <td>
+        {{ drivingInformation.expiryDate }}
+      </td>
+      <td>
+        {{ drivingInformation.licenceProvince }}
+      </td>
+      <td>
+        {{ drivingInformation.bloodGroup }}
+      </td>
+
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#update"
+          data-bs-whatever="@mdo"
+          (click)="createDrivingInformationDetail(drivingInformation)"
+        >
+          Güncelle
+        </button>
+      </td>
+      <td>
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#delete"
+          data-bs-whatever="@mdo"
+          (click)="createDrivingInformationDetail(drivingInformation)"
+        >
+          Sil
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<button
+  type="button"
+  class="btn btn-primary"
+  data-bs-toggle="modal"
+  data-bs-target="#add"
+  data-bs-whatever="@mdo"
+>
+  Ekle
+</button>
+
+<!-- DrivingInformation Ekleme modal -->
+<div
+  class="modal fade"
+  id="add"
+  tabindex="-1"
+  aria-labelledby="addLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addLabel">Sürücü Bilgisi Ekleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="drivingInformationAddForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Sürücü Sicil Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="licenceNumber"
+                formControlName="licenceNumber"
+                class="form-control"
+                placeholder="Sürücü Sicil Numarası"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="expiryDate"
+                formControlName="expiryDate"
+                class="form-control"
+                placeholder="Son Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Verildiği Yer:</label
+            >
+            <div class="form-group">
+              <select formControlName="licenceProvince" id="licenceProvince">
+                <option
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kan Grubu:</label
+            >
+            <div class="form-group">
+              <select formControlName="bloodGroup" id="bloodGroup">
+                <option
+                  *ngFor="let bloodGroup of bloodGroups; let i = index"
+                  [ngValue]="bloodGroups[i].bloodGroup"
+                >
+                  {{ bloodGroups[i].bloodGroup }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="add()">
+              Kaydet
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DrivingInformation Güncelleme Modal -->
+<div
+  class="modal fade"
+  id="update"
+  tabindex="-1"
+  aria-labelledby="updateLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateLabel">Sürücü Bilgisi Güncelleme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="drivingInformationUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Sürücü Sicil Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                type="text"
+                id="licenceNumber"
+                formControlName="licenceNumber"
+                class="form-control"
+                placeholder="Sürücü Sicil Numarası"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                type="date"
+                id="expiryDate"
+                formControlName="expiryDate"
+                class="form-control"
+                placeholder="Son Geçerlilik Tarihi"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Verildiği Yer:</label
+            >
+            <div class="form-group">
+              <select formControlName="licenceProvince" id="licenceProvince">
+                <option
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kan Grubu:</label
+            >
+            <div class="form-group">
+              <select formControlName="bloodGroup" id="bloodGroup">
+                <option
+                  *ngFor="let bloodGroup of bloodGroups; let i = index"
+                  [ngValue]="bloodGroups[i].bloodGroup"
+                >
+                  {{ bloodGroups[i].bloodGroup }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button type="button" class="btn btn-primary" (click)="update()">
+              Güncelle
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DrivingInformation Silme Modal -->
+<div
+  class="modal fade"
+  id="delete"
+  tabindex="-1"
+  aria-labelledby="deleteLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Sürücü Bilgisi Silme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form [formGroup]="drivingInformationUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Sürücü Sicil Numarası:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="text"
+                id="licenceNumber"
+                formControlName="licenceNumber"
+                class="form-control"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Son Geçerlilik Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="date"
+                id="expiryDate"
+                formControlName="expiryDate"
+                class="form-control"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Verildiği Yer:</label
+            >
+            <div class="form-group">
+              <select formControlName="licenceProvince" id="licenceProvince">
+                <option
+                  disabled
+                  *ngFor="let city of cities; let i = index"
+                  [ngValue]="cities[i].cityName"
+                >
+                  {{ cities[i].cityName }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kan Grubu:</label
+            >
+            <div class="form-group">
+              <select formControlName="bloodGroup" id="bloodGroup">
+                <option
+                  disabled
+                  *ngFor="let bloodGroup of bloodGroups; let i = index"
+                  [ngValue]="bloodGroups[i].bloodGroup"
+                >
+                  {{ bloodGroups[i].bloodGroup }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              (click)="delete()"
+            >
+              Sil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

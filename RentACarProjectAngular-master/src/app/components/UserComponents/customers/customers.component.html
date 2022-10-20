@@ -1,0 +1,656 @@
+<div class="mb-3">
+    <label for="userFilter" class="form-label">Kullanıcı Filtreleme</label>
+    <input
+      type="text"
+      [(ngModel)]="userFilter"
+      class="form-control"
+      id="userFilter"
+      placeholder="Filtre"
+    />
+  </div>
+  
+  <table class="table table-striped" *ngIf="dataLoaded == true">
+    <thead class="table-dark">
+      <tr>
+        <th scope="col">Adı</th>
+        <th scope="col">Soyadı</th>
+        <th scope="col">TC No</th>
+        <th scope="col">Doğum Yılı</th>
+        <th scope="col">Mail Adresi</th>
+        <th scope="col">Durum</th>
+        <th scope="col">Yetki</th>
+        <th scope="col">Kimlik Bilgileri</th>
+        <th scope="col">Sürücü Bilgileri</th>
+        <th scope="col">Kayıtlı Kartlar</th>
+        <th scope="col">Telefon Numaraları</th>
+        <th scope="col">Güncelle</th>
+        <th scope="col">Sil</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let userDetailDto of userDetailDtos | usersFilter: userFilter">
+        <td>{{ userDetailDto.firstName }}</td>
+        <td>{{ userDetailDto.lastName }}</td>
+        <td>{{ userDetailDto.nationalityId }}</td>
+        <td>{{ userDetailDto.birthYear }}</td>
+        <td>{{ userDetailDto.email }}</td>
+        <td>{{ userDetailDto.status }}</td>
+        <td>{{ userDetailDto.claimName }}</td>
+        <td>
+          <button
+            *ngIf="userDetailDto.claimName == 'Müşteri'"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#identityInformation"
+            data-bs-whatever="@mdo"
+            (click)="getCurrentIdentityInformation(userDetailDto.userId)"
+          >
+            Kimlik Bilgileri
+          </button>
+          <button
+            *ngIf="userDetailDto.claimName !== 'Müşteri'"
+            class="btn btn-primary"
+            disabled
+          >
+            Kimlik Bilgileri
+          </button>
+        </td>
+  
+        <td>
+          <button
+            *ngIf="userDetailDto.claimName == 'Müşteri'"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#delete"
+            data-bs-whatever="@mdo"
+            (click)="getCurrentDrivingInformation(userDetailDto.userId)"
+          >
+            Sürücü Bilgileri
+          </button>
+          <button
+            *ngIf="userDetailDto.claimName !== 'Müşteri'"
+            class="btn btn-primary"
+            disabled
+          >
+            Sürücü Bilgileri
+          </button>
+        </td>
+  
+        <td>
+          <button
+            *ngIf="userDetailDto.claimName == 'Müşteri'"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#delete"
+            data-bs-whatever="@mdo"
+            (click)="getCurrentUserCards(userDetailDto.userId)"
+          >
+            Kayıtlı Kartlar
+          </button>
+          <button
+            *ngIf="userDetailDto.claimName !== 'Müşteri'"
+            class="btn btn-primary"
+            disabled
+          >
+            Kayıtlı Kartlar
+          </button>
+        </td>
+  
+        <td>
+          <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#delete"
+            data-bs-whatever="@mdo"
+            (click)="getCurrentUserPhones(userDetailDto.userId)"
+          >
+            Telefon Numaraları
+          </button>
+        </td>
+        <td>
+          <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#update"
+            data-bs-whatever="@mdo"
+            (click)="createUserDetail(userDetailDto.userId)"
+          >
+            Güncelle
+          </button>
+        </td>
+        <td>
+          <button
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#delete"
+            data-bs-whatever="@mdo"
+            (click)="createUserDetail(userDetailDto.userId)"
+          >
+            Sil
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <button
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#add"
+    data-bs-whatever="@mdo"
+  >
+    Ekle-İptal Olacak Register Sayfası Olacak
+  </button>
+  
+  <!-- User Ekleme modal -->
+  <div
+    class="modal fade"
+    id="add"
+    tabindex="-1"
+    aria-labelledby="addLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addLabel">Kullanıcı Ekleme</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="userAddForm">
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Ad:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="firstName"
+                  formControlName="firstName"
+                  class="form-control"
+                  placeholder="Ad"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Soyad:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="lastName"
+                  formControlName="lastName"
+                  class="form-control"
+                  placeholder="Soyad"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">TC No:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="nationalityId"
+                  formControlName="nationalityId"
+                  class="form-control"
+                  placeholder="TC No"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Doğum Yılı:</label
+              >
+              <div class="form-group">
+                <select formControlName="birthYear" id="birthYear">
+                  <option
+                    *ngFor="let birthYear of birthYears; let i = index"
+                    [ngValue]="birthYears[i]"
+                  >
+                    {{ birthYears[i] }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Mail Adresi:</label
+              >
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="email"
+                  formControlName="email"
+                  class="form-control"
+                  placeholder="Mail Adresi"
+                />
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Durum:</label>
+              <div class="form-group">
+                <select formControlName="status" id="status">
+                  <option
+                    *ngFor="let status of statuses; let i = index"
+                    [ngValue]="statuses[i]"
+                  >
+                    {{ statuses[i] }}
+                  </option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Kapat
+              </button>
+              <button type="button" class="btn btn-primary" (click)="add()">
+                Kaydet
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- User Güncelleme Modal -->
+  <div
+    class="modal fade"
+    id="update"
+    tabindex="-1"
+    aria-labelledby="updateLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateLabel">Kullanıcı Güncelleme</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="userUpdateAndDeleteForm">
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Ad:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="firstName"
+                  formControlName="firstName"
+                  class="form-control"
+                  placeholder="Ad"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Soyad:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="lastName"
+                  formControlName="lastName"
+                  class="form-control"
+                  placeholder="Soyad"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">TC No:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="nationalityId"
+                  formControlName="nationalityId"
+                  class="form-control"
+                  placeholder="TC No"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Doğum Yılı:</label
+              >
+              <div class="form-group">
+                <select formControlName="birthYear" id="birthYear">
+                  <option
+                    *ngFor="let birthYear of birthYears; let i = index"
+                    [ngValue]="birthYears[i]"
+                  >
+                    {{ birthYears[i] }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Mail Adresi:</label
+              >
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="email"
+                  formControlName="email"
+                  class="form-control"
+                  placeholder="Mail Adresi"
+                />
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Durum:</label>
+              <div class="form-group">
+                <select formControlName="status" id="status">
+                  <option
+                    *ngFor="let status of statuses; let i = index"
+                    [ngValue]="statuses[i]"
+                  >
+                    {{ statuses[i] }}
+                  </option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Kapat
+              </button>
+              <button type="button" class="btn btn-primary" (click)="update()">
+                Güncelle
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- User Silme Modal -->
+  <div
+    class="modal fade"
+    id="delete"
+    tabindex="-1"
+    aria-labelledby="deleteLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deleteLabel">Kullanıcı Silme</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="userUpdateAndDeleteForm">
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Ad:</label>
+              <div class="form-group">
+                <input
+                  [readonly]="true"
+                  type="text"
+                  id="firstName"
+                  formControlName="firstName"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Soyad:</label>
+              <div class="form-group">
+                <input
+                  [readonly]="true"
+                  type="text"
+                  id="lastName"
+                  formControlName="lastName"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">TC No:</label>
+              <div class="form-group">
+                <input
+                  [readonly]="true"
+                  type="text"
+                  id="nationalityId"
+                  formControlName="nationalityId"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Doğum Yılı:</label
+              >
+              <div class="form-group">
+                <select formControlName="birthYear" id="birthYear">
+                  <option
+                    disabled
+                    *ngFor="let birthYear of birthYears; let i = index"
+                    [ngValue]="birthYears[i]"
+                  >
+                    {{ birthYears[i] }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Mail Adresi:</label
+              >
+              <div class="form-group">
+                <input
+                  [readonly]="true"
+                  type="text"
+                  id="email"
+                  formControlName="email"
+                  class="form-control"
+                />
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Durum:</label>
+              <div class="form-group">
+                <select formControlName="status" id="status">
+                  <option
+                    disabled
+                    *ngFor="let status of statuses; let i = index"
+                    [ngValue]="statuses[i]"
+                  >
+                    {{ statuses[i] }}
+                  </option>
+                </select>
+              </div>
+            </div>
+  
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Kapat
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary"
+                data-bs-dismiss="modal"
+                (click)="delete()"
+              >
+                Sil
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Identity Information Modal -->
+  <div
+    *ngIf="currentIdentityInformation"
+    class="modal fade"
+    id="identityInformation"
+    tabindex="-1"
+    aria-labelledby="identityInformationLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateLabel">Kimlik Bilgisi Güncelleme</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <form [formGroup]="identityInformationForm">
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Seri Numarası:</label
+              >
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="serialNumber"
+                  formControlName="serialNumber"
+                  class="form-control"
+                  placeholder="Seri Numarası"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Baba Adı:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="fatherName"
+                  formControlName="fatherName"
+                  class="form-control"
+                  placeholder="Baba Adı"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Anne Adı:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="motherName"
+                  formControlName="motherName"
+                  class="form-control"
+                  placeholder="Anne Adı"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Doğum Yeri:</label
+              >
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="birthPlace"
+                  formControlName="birthPlace"
+                  class="form-control"
+                  placeholder="Doğum Yeri"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Doğum Yılı:</label
+              >
+              <div class="form-group">
+                <select formControlName="birthYear" id="birthYear">
+                  <option
+                    *ngFor="let birthYear of birthYears; let i = index"
+                    [ngValue]="birthYears[i]"
+                  >
+                    {{ birthYears[i] }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Medeni Hali:</label
+              >
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="maritalStatus"
+                  formControlName="maritalStatus"
+                  class="form-control"
+                  placeholder="Medeni Hali"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label">Cinsiyet:</label>
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="gender"
+                  formControlName="gender"
+                  class="form-control"
+                  placeholder="Cinsiyet"
+                />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="recipient-name" class="col-form-label"
+                >Son Geçerlilik Tarihi:</label
+              >
+              <div class="form-group">
+                <input
+                  type="date"
+                  id="validUntil"
+                  formControlName="validUntil"
+                  class="form-control"
+                  placeholder="Son Geçerlilik Tarihi"
+                />
+              </div>
+            </div>
+  
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="modal"
+              >
+                Kapat
+              </button>
+              <button type="button" class="btn btn-primary" (click)="deneme()">
+                Güncelle
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  

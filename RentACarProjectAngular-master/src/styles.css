@@ -1,0 +1,14 @@
+/* You can add global styles to this file, and also import other style files */
+
+body {
+  /* background-image: url("https://www.teahub.io/photos/full/159-1595276_car-rental.jpg"); */
+  /* background-image: url("https://c4.wallpaperflare.com/wallpaper/66/25/239/machine-grey-background-volvo-wallpaper-preview.jpg"); */
+  /* background-image: url("https://mcdn.wallpapersafari.com/medium/34/87/L6oRPc.jpg"); */
+  background-color: rgb(205, 234, 246);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+.form-group{
+  width: 250px;
+  height: 35px;
+}

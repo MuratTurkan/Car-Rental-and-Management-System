@@ -1,0 +1,33 @@
+.card-img-top {
+    height: 320px;
+    width: 600px;
+    /* border: 3px solid rgb(215, 14, 71); */
+  }
+  
+  .anaDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /* border: 3px solid rgb(128, 40, 40); */
+    margin: 10px;
+    
+  }
+  
+  .col {
+    /* border: 3px solid rgb(214, 211, 24); */
+    display: flex;
+    margin: 10px;
+    width: 800px;
+    height: 340px;
+  }
+  
+  .card {
+    width: 600px;
+    height: 340px;
+    /* border: 3px solid rgb(89, 19, 160); */
+  }
+  .x{
+    max-width: 900px;
+    height: 500px;
+  }
+  

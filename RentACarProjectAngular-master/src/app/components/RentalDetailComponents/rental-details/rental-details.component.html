@@ -1,0 +1,217 @@
+<div class="mb-3" *ngIf="getRole() != 'Müşteri'">
+  <label for="rentalDetailFilter" class="form-label"
+    >Kiralama Detayı Filtreleme</label
+  >
+  <input
+    type="text"
+    [(ngModel)]="rentalDetailFilter"
+    class="form-control"
+    id="rentalDetailFilter"
+    placeholder="Filtre"
+  />
+</div>
+
+<table class="table table-striped" *ngIf="dataLoaded == true">
+  <thead class="table-dark">
+    <tr>
+      <th scope="col" *ngIf="getRole() != 'Müşteri'">Müşteri TC</th>
+      <th scope="col">Araba Plaka</th>
+      <th scope="col">Alış Şubesi</th>
+      <th scope="col">Kiralama Tarihi</th>
+      <th scope="col">Teslim Etme Tarihi</th>
+      <th scope="col">Ödenen Ücret</th>
+      <th scope="col" *ngIf="getRole() != 'Müşteri'">Sil</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      *ngFor="
+        let rentalDetailDto of rentalDetailDtos
+          | rentalDetailsFilter: rentalDetailFilter
+      "
+    >
+      <td *ngIf="getRole() != 'Müşteri'">
+        <a routerLink="/user/detail/{{ rentalDetailDto.userId }}">{{
+          rentalDetailDto.nationalityId
+        }}</a>
+      </td>
+      <td *ngIf="getRole() != 'Müşteri'" >
+        <a routerLink="/car/detail/{{ rentalDetailDto.carId }}">
+          {{ rentalDetailDto.carPlate }}</a
+        >
+      </td>
+      <td *ngIf="getRole() == 'Müşteri'">
+        {{ rentalDetailDto.carPlate }}
+      </td>
+      <td *ngIf="getRole() != 'Müşteri'">
+        <a routerLink="/branch/detail/{{ rentalDetailDto.branchId }} ">
+          {{ rentalDetailDto.branchName }}</a
+        >
+      </td>
+      <td *ngIf="getRole() == 'Müşteri'">
+        {{ rentalDetailDto.branchName }}
+      </td>
+      <td>
+        {{ rentalDetailDto.rentDate.toString().split("T")[0] }}
+      </td>
+      <td>
+        {{ rentalDetailDto.returnDate.toString().split("T")[0] }}
+      </td>
+      <td>
+        {{ rentalDetailDto.rentalPrice }}
+      </td>
+
+      <td *ngIf="getRole() != 'Müşteri'">
+        <button
+          type="button"
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#delete"
+          data-bs-whatever="@mdo"
+          (click)="createRentalDetail(rentalDetailDto.rentalId)"
+        >
+          Sil
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- RentalDetail Silme Modal -->
+<div
+  class="modal fade"
+  id="delete"
+  tabindex="-1"
+  aria-labelledby="deleteLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteLabel">Kiralama Detayı Silme</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body" *ngIf="rentalDetailUpdateAndDeleteForm">
+        <form [formGroup]="rentalDetailUpdateAndDeleteForm">
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Müşteri TC:</label
+            >
+            <div>
+              <select formControlName="userId" id="userId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let customer of customers; let i = index"
+                  [ngValue]="customers[i].userId"
+                >
+                  {{ customers[i].nationalityId }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Araç Plaka:</label
+            >
+            <div>
+              <select formControlName="carId" id="carId" class="form-group">
+                <option
+                  disabled
+                  *ngFor="let car of cars; let i = index"
+                  [ngValue]="cars[i].carId"
+                >
+                  {{ cars[i].carPlate }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label">Şube Adı:</label>
+            <div>
+              <select
+                formControlName="branchId"
+                id="branchId"
+                class="form-group"
+              >
+                <option
+                  disabled
+                  *ngFor="let branch of branchs; let i = index"
+                  [ngValue]="branchs[i].branchId"
+                >
+                  {{ branchs[i].branchName }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Kiralama Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="date"
+                id="rentDate"
+                formControlName="rentDate"
+                class="form-control"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Teslim Etme Tarihi:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="date"
+                id="returnDate"
+                formControlName="returnDate"
+                class="form-control"
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recipient-name" class="col-form-label"
+              >Ödenen Ücret:</label
+            >
+            <div class="form-group">
+              <input
+                [readonly]="true"
+                type="number"
+                id="rentalPrice"
+                formControlName="rentalPrice"
+                class="form-control"
+              />
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Kapat
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              (click)="delete()"
+            >
+              Sil
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
